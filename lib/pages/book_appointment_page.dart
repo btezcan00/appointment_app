@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import '../data/placeholder_data.dart';
+import '../services/firebase_service.dart';
 
 class BookAppointmentPage extends StatefulWidget {
   const BookAppointmentPage({super.key});
@@ -16,6 +16,57 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
   DateTime? selectedDate;
   TimeOfDay? selectedTime;
   final locationController = TextEditingController();
+  List<String> doctorNames = [];
+  List<String> specialties = [];
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadData();
+  }
+
+  Future<void> _loadData() async {
+    try {
+      final docs = await FirebaseService.getDoctorNames();
+      final specs = await FirebaseService.getDoctorSpecialties();
+      setState(() {
+        doctorNames = docs.isNotEmpty ? docs : _getDefaultDoctorNames();
+        specialties = specs.isNotEmpty ? specs : _getDefaultSpecialties();
+        isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        doctorNames = _getDefaultDoctorNames();
+        specialties = _getDefaultSpecialties();
+        isLoading = false;
+      });
+    }
+  }
+
+  List<String> _getDefaultDoctorNames() {
+    return [
+      'Dr. Sarah Johnson',
+      'Dr. Michael Chen',
+      'Dr. Emily Williams',
+      'Dr. Robert Brown',
+      'Dr. Jennifer Davis',
+      'Dr. David Miller',
+    ];
+  }
+
+  List<String> _getDefaultSpecialties() {
+    return [
+      'General Physician',
+      'Cardiologist',
+      'Dermatologist',
+      'Pediatrician',
+      'Orthopedic',
+      'Neurologist',
+      'Psychiatrist',
+      'Dentist',
+    ];
+  }
 
   @override
   void dispose() {
@@ -49,24 +100,52 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
     }
   }
 
-  void _bookAppointment() {
+  Future<void> _bookAppointment() async {
     if (_formKey.currentState!.validate() &&
         selectedDate != null &&
         selectedTime != null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Appointment booked successfully!'),
-          backgroundColor: Colors.green,
-        ),
-      );
-      // Clear form
-      setState(() {
-        selectedDoctor = null;
-        selectedSpecialty = null;
-        selectedDate = null;
-        selectedTime = null;
-        locationController.clear();
-      });
+      try {
+        final dateTime = DateTime(
+          selectedDate!.year,
+          selectedDate!.month,
+          selectedDate!.day,
+          selectedTime!.hour,
+          selectedTime!.minute,
+        );
+
+        await FirebaseService.addAppointment(
+          doctorName: selectedDoctor!,
+          specialty: selectedSpecialty!,
+          dateTime: dateTime,
+          location: locationController.text,
+        );
+
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Appointment booked successfully!'),
+              backgroundColor: Colors.green,
+            ),
+          );
+          // Clear form
+          setState(() {
+            selectedDoctor = null;
+            selectedSpecialty = null;
+            selectedDate = null;
+            selectedTime = null;
+            locationController.clear();
+          });
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Error booking appointment: ${e.toString()}'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -79,6 +158,12 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
 
   @override
   Widget build(BuildContext context) {
+    if (isLoading) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
     return Scaffold(
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
@@ -104,7 +189,7 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.person),
                 ),
-                items: PlaceholderData.getDoctorNames()
+                items: doctorNames
                     .map((name) => DropdownMenuItem(
                           value: name,
                           child: Text(name),
@@ -128,7 +213,7 @@ class _BookAppointmentPageState extends State<BookAppointmentPage> {
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.medical_services),
                 ),
-                items: PlaceholderData.getDoctorSpecialties()
+                items: specialties
                     .map((specialty) => DropdownMenuItem(
                           value: specialty,
                           child: Text(specialty),

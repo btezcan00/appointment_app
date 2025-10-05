@@ -1,46 +1,55 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../models/appointment.dart';
-import '../data/placeholder_data.dart';
+import '../services/firebase_service.dart';
 
-class MyAppointmentsPage extends StatefulWidget {
+class MyAppointmentsPage extends StatelessWidget {
   const MyAppointmentsPage({super.key});
-
-  @override
-  State<MyAppointmentsPage> createState() => _MyAppointmentsPageState();
-}
-
-class _MyAppointmentsPageState extends State<MyAppointmentsPage> {
-  late List<Appointment> appointments;
-
-  @override
-  void initState() {
-    super.initState();
-    appointments = PlaceholderData.getAppointments();
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: appointments.isEmpty
-          ? const Center(
+      body: StreamBuilder<List<Appointment>>(
+        stream: FirebaseService.getAppointmentsStream(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (snapshot.hasError) {
+            return Center(
+              child: Text(
+                'Error: ${snapshot.error}',
+                style: const TextStyle(fontSize: 16, color: Colors.red),
+              ),
+            );
+          }
+
+          final appointments = snapshot.data ?? [];
+
+          if (appointments.isEmpty) {
+            return const Center(
               child: Text(
                 'No appointments scheduled',
                 style: TextStyle(fontSize: 16, color: Colors.grey),
               ),
-            )
-          : ListView.builder(
-              padding: const EdgeInsets.all(16),
-              itemCount: appointments.length,
-              itemBuilder: (context, index) {
-                final appointment = appointments[index];
-                return _buildAppointmentCard(appointment);
-              },
-            ),
+            );
+          }
+
+          return ListView.builder(
+            padding: const EdgeInsets.all(16),
+            itemCount: appointments.length,
+            itemBuilder: (context, index) {
+              final appointment = appointments[index];
+              return _buildAppointmentCard(context, appointment);
+            },
+          );
+        },
+      ),
     );
   }
 
-  Widget _buildAppointmentCard(Appointment appointment) {
+  Widget _buildAppointmentCard(BuildContext context, Appointment appointment) {
     final dateFormat = DateFormat('MMM dd, yyyy');
     final timeFormat = DateFormat('hh:mm a');
 

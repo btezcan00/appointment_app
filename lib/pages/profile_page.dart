@@ -1,12 +1,53 @@
 import 'package:flutter/material.dart';
-import '../data/placeholder_data.dart';
+import '../services/firebase_service.dart';
+import '../models/user_profile.dart';
 
-class ProfilePage extends StatelessWidget {
+class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
 
   @override
+  State<ProfilePage> createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
+  @override
   Widget build(BuildContext context) {
-    final userProfile = PlaceholderData.getUserProfile();
+    return FutureBuilder<UserProfile?>(
+      future: FirebaseService.getUserProfile(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
+        }
+
+        if (snapshot.hasError) {
+          return Scaffold(
+            body: Center(
+              child: Text(
+                'Error: ${snapshot.error}',
+                style: const TextStyle(fontSize: 16, color: Colors.red),
+              ),
+            ),
+          );
+        }
+
+        final userProfile = snapshot.data ??
+            UserProfile(
+              name: 'Guest User',
+              age: 0,
+              profilePhotoUrl: '',
+              email: 'guest@example.com',
+              phone: '',
+              address: '',
+            );
+
+        return _buildProfileContent(context, userProfile);
+      },
+    );
+  }
+
+  Widget _buildProfileContent(BuildContext context, UserProfile userProfile) {
 
     return Scaffold(
       body: SingleChildScrollView(
@@ -82,19 +123,19 @@ class ProfilePage extends StatelessWidget {
                   _buildInfoCard(
                     icon: Icons.email_outlined,
                     title: 'Email',
-                    value: 'john.doe@example.com',
+                    value: userProfile.email.isEmpty ? 'Not set' : userProfile.email,
                   ),
                   const SizedBox(height: 12),
                   _buildInfoCard(
                     icon: Icons.phone_outlined,
                     title: 'Phone',
-                    value: '+1 (555) 123-4567',
+                    value: userProfile.phone.isEmpty ? 'Not set' : userProfile.phone,
                   ),
                   const SizedBox(height: 12),
                   _buildInfoCard(
                     icon: Icons.location_on_outlined,
                     title: 'Address',
-                    value: '123 Main St, New York, NY 10001',
+                    value: userProfile.address.isEmpty ? 'Not set' : userProfile.address,
                   ),
                   const SizedBox(height: 24),
 
@@ -115,6 +156,23 @@ class ProfilePage extends StatelessWidget {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.blue,
                         foregroundColor: Colors.white,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  // Logout Button
+                  SizedBox(
+                    width: double.infinity,
+                    height: 50,
+                    child: OutlinedButton.icon(
+                      onPressed: () async {
+                        await FirebaseService.signOut();
+                      },
+                      icon: const Icon(Icons.logout),
+                      label: const Text('Logout'),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: Colors.red,
+                        side: const BorderSide(color: Colors.red),
                       ),
                     ),
                   ),
