@@ -24,9 +24,33 @@ class _ProfilePageState extends State<ProfilePage> {
         if (snapshot.hasError) {
           return Scaffold(
             body: Center(
-              child: Text(
-                'Error: ${snapshot.error}',
-                style: const TextStyle(fontSize: 16, color: Colors.red),
+              child: Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.cloud_off, size: 64, color: Colors.grey),
+                    const SizedBox(height: 16),
+                    const Text(
+                      'Cannot connect to Firebase',
+                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Please ensure Firestore is enabled in Firebase Console',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                    ),
+                    const SizedBox(height: 24),
+                    ElevatedButton.icon(
+                      onPressed: () {
+                        setState(() {});
+                      },
+                      icon: const Icon(Icons.refresh),
+                      label: const Text('Retry'),
+                    ),
+                  ],
+                ),
               ),
             ),
           );

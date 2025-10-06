@@ -44,40 +44,41 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyC5example',
-    appId: '1:123456789012:web:abcdef123456',
-    messagingSenderId: '123456789012',
-    projectId: 'rugged-scion-288306',
-    authDomain: 'rugged-scion-288306.firebaseapp.com',
-    storageBucket: 'rugged-scion-288306.appspot.com',
+    apiKey: 'AIzaSyC1LooQAd3pGlbh512Zt67XiIoo6GrDa9U',
+    appId: '1:469163965263:web:defd4f9205d6137775633a',
+    messagingSenderId: '469163965263',
+    projectId: 'milvum-7e98b',
+    authDomain: 'milvum-7e98b.firebaseapp.com',
+    storageBucket: 'milvum-7e98b.firebasestorage.app',
+    measurementId: 'G-T9KNCMKNEG',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyC5example',
-    appId: '1:123456789012:android:abcdef123456',
-    messagingSenderId: '123456789012',
-    projectId: 'rugged-scion-288306',
-    authDomain: 'rugged-scion-288306.firebaseapp.com',
-    storageBucket: 'rugged-scion-288306.appspot.com',
+    apiKey: 'AIzaSyC1LooQAd3pGlbh512Zt67XiIoo6GrDa9U',
+    appId: '1:469163965263:android:defd4f9205d6137775633a',
+    messagingSenderId: '469163965263',
+    projectId: 'milvum-7e98b',
+    authDomain: 'milvum-7e98b.firebaseapp.com',
+    storageBucket: 'milvum-7e98b.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyC5example',
-    appId: '1:123456789012:ios:abcdef123456',
-    messagingSenderId: '123456789012',
-    projectId: 'rugged-scion-288306',
-    authDomain: 'rugged-scion-288306.firebaseapp.com',
-    storageBucket: 'rugged-scion-288306.appspot.com',
+    apiKey: 'AIzaSyC1LooQAd3pGlbh512Zt67XiIoo6GrDa9U',
+    appId: '1:469163965263:ios:defd4f9205d6137775633a',
+    messagingSenderId: '469163965263',
+    projectId: 'milvum-7e98b',
+    authDomain: 'milvum-7e98b.firebaseapp.com',
+    storageBucket: 'milvum-7e98b.firebasestorage.app',
     iosBundleId: 'com.example.appointmentApp',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyC5example',
-    appId: '1:123456789012:ios:abcdef123456',
-    messagingSenderId: '123456789012',
-    projectId: 'rugged-scion-288306',
-    authDomain: 'rugged-scion-288306.firebaseapp.com',
-    storageBucket: 'rugged-scion-288306.appspot.com',
+    apiKey: 'AIzaSyC1LooQAd3pGlbh512Zt67XiIoo6GrDa9U',
+    appId: '1:469163965263:ios:defd4f9205d6137775633a',
+    messagingSenderId: '469163965263',
+    projectId: 'milvum-7e98b',
+    authDomain: 'milvum-7e98b.firebaseapp.com',
+    storageBucket: 'milvum-7e98b.firebasestorage.app',
     iosBundleId: 'com.example.appointmentApp',
   );
 }
