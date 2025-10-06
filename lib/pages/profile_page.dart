@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../services/firebase_service.dart';
 import '../models/user_profile.dart';
+import 'edit_profile_page.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -168,12 +169,20 @@ class _ProfilePageState extends State<ProfilePage> {
                     width: double.infinity,
                     height: 50,
                     child: ElevatedButton.icon(
-                      onPressed: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Edit profile feature coming soon!'),
+                      onPressed: () async {
+                        final result = await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => EditProfilePage(
+                              currentProfile: userProfile,
+                            ),
                           ),
                         );
+
+                        // Refresh the profile if changes were saved
+                        if (result == true) {
+                          setState(() {});
+                        }
                       },
                       icon: const Icon(Icons.edit),
                       label: const Text('Edit Profile'),
